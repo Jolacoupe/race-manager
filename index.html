@@ -392,7 +392,9 @@
 <div class="footer">RACE MANAGER v1.0 — Données : live.ris-timing.be — Usage hors ligne possible si l'API est accessible en réseau</div>
 
 <script>
-const API = 'https://live.ris-timing.be/api/live-timing?uuid=';
+const API_DIRECT = 'https://live.ris-timing.be/api/live-timing?uuid=';
+const API_PROXY  = 'https://corsproxy.io/?url=' + encodeURIComponent('https://live.ris-timing.be/api/live-timing?uuid=');
+const API = API_PROXY;
 const DEFAULT_UUID = '00000000-0000-0000-0000-000000000001';
 
 let timer = null;
@@ -464,7 +466,9 @@ function setBadge(text, type) {
 
 async function fetchData() {
   try {
-    const resp = await fetch(API + state.uuid, { cache: 'no-store' });
+    const targetUrl = 'https://live.ris-timing.be/api/live-timing?uuid=' + state.uuid;
+    const proxyUrl = 'https://corsproxy.io/?url=' + encodeURIComponent(targetUrl);
+    const resp = await fetch(proxyUrl, { cache: 'no-store' });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
     processData(data);
